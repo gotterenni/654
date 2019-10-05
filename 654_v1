@@ -1,0 +1,49 @@
+#include <Servo.h>
+
+String data;
+
+Servo ser_x;
+Servo ser_y;
+
+
+float center_x = 90;
+float center_y = 90;
+int cord_x=0;
+int cord_y=0;
+void setup(){
+ Serial.begin(9600);
+ ser_x.attach(9);
+ ser_y.attach(10);
+ ser_x.write(85);
+}
+
+void loop(){
+    while(Serial.available() > 0){
+    data = Serial.readStringUntil('\n');
+    Serial.setTimeout(0.01);
+    center_x = ser_x.read();
+    center_y = ser_y.read();
+    cord_x=round(center_x+parseX(data)/10);
+    cord_y=round(center_y-parseY(data)/8);
+      ser_x.write(cord_x);
+      delay(20);
+      
+      ser_y.write(cord_y);
+      delay(20);
+   }
+ }
+
+int parseX(String data){
+ data.remove(data.indexOf("Y"));
+ data.remove(0, data.indexOf("X") + 1);
+ 
+ return data.toInt();
+}
+
+int parseY(String data){
+ data.remove(0, data.indexOf("Y") + 1);
+ 
+ return data.toInt();
+}
+    
+ 
